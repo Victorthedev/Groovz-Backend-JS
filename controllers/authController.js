@@ -7,17 +7,22 @@ const login = (req, res) => {
 };
 
 const callback = async (req, res) => {
-    const code = req.query.code || null;
-    const data = await spotifyApi.authorizationCodeGrant(code);
-    const { access_token, refresh_token } = data.body;
+    try {
+        const code = req.query.code || null;
+        const data = await spotifyApi.authorizationCodeGrant(code);
+        const { access_token, refresh_token } = data.body;
 
-    spotifyApi.setAccessToken(access_token);
-    spotifyApi.setRefreshToken(refresh_token);
+        spotifyApi.setAccessToken(access_token);
+        spotifyApi.setRefreshToken(refresh_token);
 
-    res.cookie('spotify_access_token', access_token, { httpOnly: true });
-    res.redirect('/playlist/');
+        res.cookie('spotify_access_token', access_token, { httpOnly: true });
+        res.redirect('/playlist/');
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 module.exports = {
-    login, callback,
+    login,
+    callback,
 };
