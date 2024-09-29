@@ -41,7 +41,7 @@ const createPlaylistFromSeedTrack = async (userId, seedTrackId) => {
     const recommendations = await getTrackRecommendations(seedTrackId);
     const trackUris = recommendations.map(track => track.uri);
 
-    const playlistName = 'Music for You';
+    const playlistName = 'Groovz';
     const description = `Similar songs to ${seedTrackName}`;
 
     const playlistId = await createPlaylist(userId, playlistName, description, trackUris);
