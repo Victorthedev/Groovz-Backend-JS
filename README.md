@@ -53,7 +53,7 @@ Replace `your_spotify_client_id` and `your_spotify_client_secret` with your actu
 ## Usage
 
 To start the server, run:
-- npm start
+- node app
 
 The server will start running on `http://localhost:4000` (or the port specified in your `.env` file).
 
