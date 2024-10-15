@@ -5,6 +5,5 @@ const router = express.Router();
 
 router.get('/login', authController.login);
 router.get('/callback', authController.callback);
-router.post('/refresh', authController.refreshToken);
 
 module.exports = router;
