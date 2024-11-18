@@ -1,57 +1,73 @@
-const spotifyApi = require('../utils/spotifyApi');
+let accessToken = null;
 
-const getAuthUrl = () => {
-    const scopes = ['user-library-read', 'playlist-modify-private', 'playlist-modify-public'];
-    return spotifyApi.createAuthorizeURL(scopes, 'state-key');
+const makeSpotifyRequest = async (endpoint, options = {}) => {
+    const response = await fetch(`${BASE_URL}${endpoint}`, {
+        ...options,
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+    
+    if (!response.ok) {
+        throw new Error(`Spotify API error: ${response.statusText}`);
+    }
+    
+    return response.json();
 };
 
-const setAccessToken = (accessToken) => {
-    spotifyApi.setAccessToken(accessToken);
+const setAccessToken = (token) => {
+    accessToken = token;
 };
 
 const getUserPlaylists = async (offset = 0, limit = 20) => {
-    const response = await spotifyApi.getUserPlaylists({ offset, limit });
-    return response.body;
+    return makeSpotifyRequest(`/me/playlists?offset=${offset}&limit=${limit}`);
 };
 
 const getTrackRecommendations = async (seedTrackId) => {
-    const response = await spotifyApi.getRecommendations({
-        seed_tracks: [seedTrackId],
-        limit: 10,
+    const params = new URLSearchParams({
+        seed_tracks: seedTrackId,
+        limit: 10
     });
-    return response.body.tracks;
+    return makeSpotifyRequest(`/recommendations?${params.toString()}`);
 };
 
-const createPlaylist = async (userId, name, description, trackUris) => {
-    const playlistResponse = await spotifyApi.createPlaylist(userId, {
-        name,
-        description,
+const getTrack = async (trackId) => {
+    return makeSpotifyRequest(`/tracks/${trackId}`);
+};
+
+const createPlaylist = async (userId, name, description) => {
+    return makeSpotifyRequest(`/users/${userId}/playlists`, {
+        method: 'POST',
+        body: JSON.stringify({ name, description })
     });
+};
 
-    const playlistId = playlistResponse.body.id;
-    await spotifyApi.addTracksToPlaylist(playlistId, trackUris);
-
-    return playlistId;
+const addTracksToPlaylist = async (playlistId, trackUris) => {
+    return makeSpotifyRequest(`/playlists/${playlistId}/tracks`, {
+        method: 'POST',
+        body: JSON.stringify({ uris: trackUris })
+    });
 };
 
 const createPlaylistFromSeedTrack = async (userId, seedTrackId) => {
-    const seedTrack = await spotifyApi.getTrack(seedTrackId);
-    const seedTrackName = seedTrack.body.name;
-
+    const seedTrack = await getTrack(seedTrackId);
     const recommendations = await getTrackRecommendations(seedTrackId);
-    const trackUris = recommendations.map(track => track.uri);
+    const trackUris = recommendations.tracks.map(track => track.uri);
 
     const playlistName = 'Groovz';
-    const description = `Similar songs to ${seedTrackName}`;
+    const description = `Similar songs to ${seedTrack.name}`;
 
-    const playlistId = await createPlaylist(userId, playlistName, description, trackUris);
-    return playlistId;
+    const playlist = await createPlaylist(userId, playlistName, description);
+    await addTracksToPlaylist(playlist.id, trackUris);
+
+    return playlist.id;
 };
 
 module.exports = {
-    getAuthUrl,
     setAccessToken,
     getUserPlaylists,
     getTrackRecommendations,
-    createPlaylistFromSeedTrack,
+    createPlaylistFromSeedTrack
 };
