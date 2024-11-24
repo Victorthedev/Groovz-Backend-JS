@@ -9,8 +9,18 @@ const setAccessToken = (accessToken) => {
     spotifyApi.setAccessToken(accessToken);
 };
 
-const getUserPlaylists = async (offset = 0, limit = 20) => {
-    const response = await spotifyApi.getUserPlaylists({ offset, limit });
+const getUserPlaylists = async (offset = 0) => {
+    const response = await spotifyApi.getUserPlaylists({ offset });
+    return response.body;
+};
+
+const getPlaylist = async (playlistId) => {
+    const response = await spotifyApi.getPlaylist(playlistId);
+    return response.body;
+};
+
+const getPlaylistTracks = async (playlistId) => {
+    const response = await spotifyApi.getPlaylistTracks(playlistId);
     return response.body;
 };
 
@@ -41,7 +51,7 @@ const createPlaylistFromSeedTrack = async (userId, seedTrackId) => {
     const recommendations = await getTrackRecommendations(seedTrackId);
     const trackUris = recommendations.map(track => track.uri);
 
-    const playlistName = 'Music for You';
+    const playlistName = 'Groovz';
     const description = `Similar songs to ${seedTrackName}`;
 
     const playlistId = await createPlaylist(userId, playlistName, description, trackUris);
@@ -52,6 +62,8 @@ module.exports = {
     getAuthUrl,
     setAccessToken,
     getUserPlaylists,
+    getPlaylist,
+    getPlaylistTracks,
     getTrackRecommendations,
     createPlaylistFromSeedTrack,
 };

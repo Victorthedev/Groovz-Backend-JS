@@ -16,9 +16,9 @@ const callback = async (req, res) => {
         spotifyApi.setRefreshToken(refresh_token);
 
         res.cookie('spotify_access_token', access_token, { httpOnly: true });
-        res.redirect('/playlist/');
+        res.redirect('http://localhost:5173/home');
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.redirect('http://localhost:3000/login?error=auth_failed');
     }
 };
 

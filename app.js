@@ -2,14 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
-const cors = require('cors');
+const cors = require('./middleware/cors');
 const authRoutes = require('./routes/authRoutes');
 const playlistRoutes = require('./routes/playlistRoutes');
 
 dotenv.config();
 
 const app = express();
-app.use(cors()); 
+app.use(cors);
 app.use(bodyParser.json());
 app.use(cookieParser());
 

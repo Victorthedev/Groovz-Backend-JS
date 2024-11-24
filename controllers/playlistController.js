@@ -10,6 +10,21 @@ const getPlaylists = async (req, res) => {
     }
 };
 
+const getPlaylistSongs = async (req, res) => {
+    try {
+        const { playlistId } = req.params;
+        const playlist = await spotifyService.getPlaylist(playlistId);
+        const tracks = await spotifyService.getPlaylistTracks(playlistId);
+        
+        res.json({
+            playlist: playlist,
+            songs: tracks.items.map(item => item.track)
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 const createPlaylist = async (req, res) => {
     try {
         const { seedTrackId } = req.body;
@@ -23,5 +38,6 @@ const createPlaylist = async (req, res) => {
 
 module.exports = {
     getPlaylists,
+    getPlaylistSongs,
     createPlaylist,
 };
