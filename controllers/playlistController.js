@@ -10,6 +10,18 @@ const getPlaylists = async (req, res) => {
     }
 };
 
+const getLikedSongs = async (req, res) => {
+    try {
+        const likedSongs = await spotifyService.getLikedSongs();
+        res.json(likedSongs);
+    } catch (error) {
+        console.error('Error in getLikedSongs controller:', error);
+        res.status(error.statusCode || 500).json({
+            error: error.message || 'An error occurred while fetching liked songs'
+        });
+    }
+};
+
 const getPlaylistSongs = async (req, res) => {
     try {
         const { playlistId } = req.params;
@@ -38,6 +50,7 @@ const createPlaylist = async (req, res) => {
 
 module.exports = {
     getPlaylists,
+    getLikedSongs,
     getPlaylistSongs,
     createPlaylist,
 };
