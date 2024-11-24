@@ -4,6 +4,8 @@
   "description": "Music for you",
   "main": "app.js",
   "scripts": {
+    "build": "echo \"No build step required\"",
+    "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Victorthedev",
