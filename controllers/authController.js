@@ -17,9 +17,9 @@ const callback = async (req, res) => {
         spotifyApi.setRefreshToken(refresh_token);
 
         res.cookie('spotify_access_token', access_token, { httpOnly: true });
-        res.redirect('http://localhost:5173/home');
+        res.redirect('https://main.d1n7z7zw3v28b1.amplifyapp.com//home');
     } catch (error) {
-        res.redirect('http://localhost:5173/login?error=auth_failed');
+        res.redirect('https://main.d1n7z7zw3v28b1.amplifyapp.com//login?error=auth_failed');
     }
 };
 
