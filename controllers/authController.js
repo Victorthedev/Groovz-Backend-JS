@@ -2,7 +2,8 @@ const spotifyService = require('../services/spotifyService');
 const spotifyApi = require('../utils/spotifyApi');
 
 const login = (req, res) => {
-    const authUrl = spotifyService.getAuthUrl();
+    const scopes = ['user-library-read', 'playlist-modify-private', 'playlist-modify-public'];
+    const authUrl = spotifyService.getAuthUrl(scopes);
     res.redirect(authUrl);
 };
 
@@ -16,9 +17,9 @@ const callback = async (req, res) => {
         spotifyApi.setRefreshToken(refresh_token);
 
         res.cookie('spotify_access_token', access_token, { httpOnly: true });
-        res.redirect('https://main.d1n7z7zw3v28b1.amplifyapp.com/home');
+        res.redirect('http://localhost:5173/home');
     } catch (error) {
-        res.redirect('https://main.d1n7z7zw3v28b1.amplifyapp.com/login?error=auth_failed');
+        res.redirect('http://localhost:5173/login?error=auth_failed');
     }
 };
 
