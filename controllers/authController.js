@@ -12,6 +12,9 @@ const callback = async (req, res) => {
         const data = await spotifyApi.authorizationCodeGrant(code);
         const { access_token, refresh_token } = data.body;
 
+        console.log('Granted Scopes:', data.body.scope);
+
+
         spotifyApi.setAccessToken(access_token);
         spotifyApi.setRefreshToken(refresh_token);
 

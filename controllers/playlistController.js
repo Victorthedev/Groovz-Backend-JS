@@ -39,14 +39,17 @@ const getPlaylistSongs = async (req, res) => {
 
 const createPlaylist = async (req, res) => {
     try {
+        console.log('Create playlist request body:', req.body);
+        console.log('User ID:', req.query.userId);
         const { seedTrackId } = req.body;
-        const userId = req.query.userId;
-        const playlistId = await spotifyService.createPlaylistFromSeedTrack(userId, seedTrackId);
+        const playlistId = await spotifyService.createPlaylistFromSeedTrack(req.query.userId, seedTrackId);
         res.json({ message: 'Playlist created successfully', playlistId });
     } catch (error) {
+        console.log('Error in createPlaylist:', error);
         res.status(500).json({ error: error.message });
     }
 };
+
 
 module.exports = {
     getPlaylists,
